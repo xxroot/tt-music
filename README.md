@@ -38,9 +38,9 @@ tt-music-docker/
 1. 在 Docker Hub 建一个仓库 `tt-music`（与工作流里的 `IMAGE_NAME` 一致），公开仓库即可免登录 pull。
 2. Docker Hub → Account Settings → **Personal access tokens**，建一个 **Read & Write** 权限的 token。
 3. GitHub 仓库 → Settings → Secrets and variables → Actions，添加两个 Repository secrets：
-   - `DOCKERHUB_USERNAME`：你的 Docker Hub 用户名
+   - `DOCKERHUB_USERNAME` = `xxroot`
    - `DOCKERHUB_TOKEN`：上一步的 token（**不是账号登录密码**）
-4. 把 `docker-compose.yml` 里的 `CHANGE_ME` 改成你的 Docker Hub 用户名，提交并 push。**只有这一行影响实际运行**，所有设备共用同一份配置；README 其它示例命令里的 `CHANGE_ME` 只是示意，手动执行时同样换成你的用户名即可。
+4. `docker-compose.yml` 里的镜像地址已填为 `xxroot/tt-music:latest`，无需再改；若 Docker Hub 用户名不是 `xxroot`，只改这一行即可（也可用 `.env` 的 `DOCKER_IMAGE` 覆盖）。
 
 > 默认分支若不叫 `main`/`master`，把工作流 `on.push.branches` 改成对应名字；也可以随时在 Actions 页面手动 `Run workflow` 触发。
 
@@ -74,13 +74,13 @@ docker compose -f docker-compose.yml -f docker-compose.local.yml up -d --build
 ### 备选：纯 Docker（不用 compose）
 
 ```bash
-docker pull CHANGE_ME/tt-music:latest     # 或本地 docker build -t tt-music:patched .
+docker pull xxroot/tt-music:latest     # 或本地 docker build -t tt-music:patched .
 docker run -d --name tt-music \
   --network host \
   --restart unless-stopped \
   -v "$PWD/data:/server/data" \
   -v "$PWD/music:/server/music" \
-  CHANGE_ME/tt-music:latest
+  xxroot/tt-music:latest
 
 # 打开 http://127.0.0.1:9527/ 完成首次设置
 # 如需预置密码（跳过向导），追加：
@@ -170,7 +170,7 @@ docker run -d --name tt-music \
 可在任意机器上验证推上去的确实是双架构：
 
 ```bash
-docker buildx imagetools inspect CHANGE_ME/tt-music:latest
+docker buildx imagetools inspect xxroot/tt-music:latest
 ```
 
 输出里应同时出现 `linux/amd64` 和 `linux/arm64/v8` 两个条目。上游镜像只有这两种架构，32 位 x86（`linux/386`）不受支持。`docker-compose.yml` 里没有也不该有 `platform` 字段——写死反而会破坏自动选层。

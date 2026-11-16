@@ -166,6 +166,7 @@ class App {
         // WebDAV 和文件管理器
         this.bindWebDAVEvents();
         this.bindFileManagerEvents();
+        this.bindPublicSourceEvents();
 
         // PWA 安装事件
         this.deferredPrompt = null;
@@ -292,6 +293,7 @@ class App {
             users: '用户管理',
             data: '数据查看',
             config: '系统配置',
+            sources: '公共音源',
             logs: '系统日志',
             webdav: 'WebDAV同步',
             files: '文件管理',
@@ -315,6 +317,9 @@ class App {
                 break;
             case 'config':
                 this.loadConfig();
+                break;
+            case 'sources':
+                this.loadPublicSources();
                 break;
             case 'logs':
                 this.loadLogs();
@@ -2136,6 +2141,211 @@ class App {
         div.textContent = text;
         return div.innerHTML;
     }
+
+    // ========== 公共音源管理（管理员配置一次，所有用户共享） ==========
+    // 后端已有完整链路：username=default 映射到公共目录 users/source/_open，
+    // owner='open' 的音源对所有用户放行；这里只补后台管理入口，无需改后端。
+    bindPublicSourceEvents() {
+        const fileInput = document.getElementById('source-file-input');
+        document.getElementById('btn-source-file')?.addEventListener('click', () => fileInput?.click());
+        fileInput?.addEventListener('change', (e) => {
+            const file = e.target.files?.[0];
+            if (file) this.uploadPublicSource(file);
+            e.target.value = '';
+        });
+        document.getElementById('btn-source-url')?.addEventListener('click', () => {
+            document.getElementById('source-url-row')?.classList.remove('hidden');
+            document.getElementById('source-url-input')?.focus();
+        });
+        document.getElementById('btn-source-url-cancel')?.addEventListener('click', () => {
+            document.getElementById('source-url-row')?.classList.add('hidden');
+        });
+        document.getElementById('btn-source-url-confirm')?.addEventListener('click', () => this.importPublicSource());
+        document.getElementById('source-url-input')?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); this.importPublicSource(); }
+        });
+        document.getElementById('refresh-sources-btn')?.addEventListener('click', () => this.loadPublicSources());
+    }
+
+    parseSourceError(err) {
+        try {
+            const parsed = JSON.parse(err.message);
+            return parsed.error || parsed.message || err.message;
+        } catch (e) {
+            return err.message;
+        }
+    }
+
+    setSourceStatus(message, type = 'info') {
+        const el = document.getElementById('sources-status');
+        if (!el) return;
+        if (!message) { el.classList.add('hidden'); return; }
+        el.textContent = message;
+        el.className = `source-status ${type}`;
+        el.classList.remove('hidden');
+    }
+
+    async loadPublicSources() {
+        this.setSourceStatus('正在加载公共音源…', 'info');
+        try {
+            const data = await this.request('/api/custom-source/list?username=default');
+            const sources = (Array.isArray(data) ? data : []).filter(s => s.isPublic !== false);
+            this.renderPublicSources(sources);
+            const enabled = sources.filter(s => s.enabled).length;
+            this.setSourceStatus(sources.length ? `共 ${sources.length} 个公共音源，${enabled} 个已启用` : '', 'info');
+        } catch (err) {
+            this.renderPublicSources([]);
+            this.setSourceStatus('加载失败：' + this.parseSourceError(err), 'error');
+        }
+    }
+
+    renderPublicSources(sources) {
+        const list = document.getElementById('public-sources-list');
+        if (!list) return;
+        if (!sources.length) {
+            list.innerHTML = '<div class="source-empty">还没有公共音源。<br>上传 .js 音源脚本或从 URL 导入，所有用户就都能直接使用了。</div>';
+            return;
+        }
+        list.innerHTML = sources.map(s => {
+            const id = encodeURIComponent(s.id || '');
+            const name = this.escapeHtml(s.name || s.id || '未命名音源');
+            const version = this.escapeHtml(s.version || '1.0.0');
+            const author = this.escapeHtml(s.author || '未知');
+            const desc = this.escapeHtml(s.description || '无描述');
+            const platforms = (Array.isArray(s.supportedSources) ? s.supportedSources : [])
+                .map(p => `<span class="tag">${this.escapeHtml(String(p))}</span>`).join('');
+            const size = typeof s.size === 'number' ? `${(s.size / 1024).toFixed(1)} KB` : '';
+            const time = s.uploadTime ? new Date(s.uploadTime).toLocaleString() : '';
+            const meta = [author ? `作者 ${author}` : '', size, time].filter(Boolean).join(' · ');
+            const failed = s.status === 'failed';
+            const stateClass = failed ? 'failed' : (s.enabled ? 'on' : 'off');
+            const stateText = failed
+                ? `运行异常：${this.escapeHtml(s.error || '未知错误')}`
+                : (s.enabled ? '已启用 · 对所有用户生效' : '已禁用 · 暂不生效');
+            return `<div class="source-item">
+                <div class="source-item-head">
+                    <div>
+                        <span class="source-item-title">${name}</span><span class="source-version">v${version}</span>
+                        <div class="source-meta">${this.escapeHtml(meta)} · ${this.escapeHtml(s.id || '')}</div>
+                    </div>
+                    <div class="source-actions">
+                        <button class="btn-secondary" onclick="app.togglePublicSource(decodeURIComponent('${id}'), ${s.enabled ? 'false' : 'true'})">${s.enabled ? '禁用' : '启用'}</button>
+                        <button class="btn-danger" onclick="app.deletePublicSource(decodeURIComponent('${id}'))">删除</button>
+                    </div>
+                </div>
+                <div class="source-desc">${desc}</div>
+                <div class="source-platforms">${platforms || '<span class="tag">未声明支持平台</span>'}</div>
+                <div class="source-state ${stateClass}">${stateText}</div>
+            </div>`;
+        }).join('');
+    }
+
+    async submitPublicSource(endpoint, payload) {
+        const autoEnable = document.getElementById('source-auto-enable')?.checked !== false;
+        this.setSourceStatus('正在添加公共音源…', 'info');
+        try {
+            let data = await this.request(endpoint, {
+                method: 'POST',
+                body: JSON.stringify({ ...payload, username: 'default' })
+            });
+            if (data.requireUnsafe) {
+                if (!window.confirm(data.message || '该脚本需要原生 VM 模式运行，可能存在安全风险，是否继续？')) {
+                    this.setSourceStatus('已取消添加', 'info');
+                    return;
+                }
+                data = await this.request(endpoint, {
+                    method: 'POST',
+                    body: JSON.stringify({ ...payload, username: 'default', allowUnsafeVM: true })
+                });
+            }
+            if (!data.success) throw new Error(data.error || data.message || '添加失败');
+            if (autoEnable && data.id) {
+                try {
+                    const toggleRes = await this.request('/api/custom-source/toggle', {
+                        method: 'POST',
+                        body: JSON.stringify({ id: data.id, enabled: true, username: 'default' })
+                    });
+                    if (toggleRes && toggleRes.requireUnsafe) {
+                        await this.request('/api/custom-source/toggle', {
+                            method: 'POST',
+                            body: JSON.stringify({ id: data.id, enabled: true, username: 'default', allowUnsafeVM: true })
+                        });
+                    }
+                } catch (e) {
+                    showError('音源已添加，但自动启用失败：' + this.parseSourceError(e) + '，请手动点击「启用」');
+                }
+            }
+            showSuccess('公共音源已添加' + (autoEnable ? '并启用' : '，请手动启用'));
+            document.getElementById('source-url-row')?.classList.add('hidden');
+            const urlInput = document.getElementById('source-url-input');
+            if (urlInput) urlInput.value = '';
+            await this.loadPublicSources();
+        } catch (err) {
+            this.setSourceStatus('添加失败：' + this.parseSourceError(err), 'error');
+            showError('添加公共音源失败：' + this.parseSourceError(err));
+        }
+    }
+
+    async uploadPublicSource(file) {
+        try {
+            const content = await file.text();
+            await this.submitPublicSource('/api/custom-source/upload', { filename: file.name, content });
+        } catch (err) {
+            this.setSourceStatus('读取文件失败：' + this.parseSourceError(err), 'error');
+        }
+    }
+
+    async importPublicSource() {
+        const url = document.getElementById('source-url-input')?.value.trim();
+        if (!url) { this.setSourceStatus('请填写音源脚本 URL', 'error'); return; }
+        let filename = 'source.js';
+        try {
+            filename = decodeURIComponent(new URL(url).pathname.split('/').pop()) || 'source.js';
+        } catch (e) { /* 保留默认文件名 */ }
+        await this.submitPublicSource('/api/custom-source/import', { url, filename });
+    }
+
+    async togglePublicSource(id, enabled) {
+        this.setSourceStatus(enabled ? '正在启用…' : '正在禁用…', 'info');
+        try {
+            let data = await this.request('/api/custom-source/toggle', {
+                method: 'POST',
+                body: JSON.stringify({ id, enabled, username: 'default' })
+            });
+            if (data.requireUnsafe) {
+                if (!window.confirm(data.message || '该脚本需要原生 VM 模式运行，是否继续？')) {
+                    this.setSourceStatus('已取消', 'info');
+                    return;
+                }
+                data = await this.request('/api/custom-source/toggle', {
+                    method: 'POST',
+                    body: JSON.stringify({ id, enabled, username: 'default', allowUnsafeVM: true })
+                });
+            }
+            if (!data.success) throw new Error(data.error || data.message || '操作失败');
+            showSuccess(enabled ? '已启用，所有用户可用' : '已禁用');
+            await this.loadPublicSources();
+        } catch (err) {
+            this.setSourceStatus('操作失败：' + this.parseSourceError(err), 'error');
+            showError('操作失败：' + this.parseSourceError(err));
+        }
+    }
+
+    async deletePublicSource(id) {
+        if (!window.confirm(`确定删除公共音源「${id}」吗？删除后所有用户都将不再看到它。`)) return;
+        try {
+            await this.request('/api/custom-source/delete', {
+                method: 'POST',
+                body: JSON.stringify({ id, username: 'default' })
+            });
+            showSuccess('公共音源已删除');
+            await this.loadPublicSources();
+        } catch (err) {
+            this.setSourceStatus('删除失败：' + this.parseSourceError(err), 'error');
+            showError('删除失败：' + this.parseSourceError(err));
+        }
+    }
+
     // ========== WebDAV 功能 ==========
 
     async testWebDAV() {

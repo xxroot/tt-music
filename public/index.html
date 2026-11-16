@@ -104,6 +104,16 @@
                     <span>系统配置</span>
                 </a>
 
+                <!-- 公共音源管理：一次配置，所有用户可用 -->
+                <a href="#" class="nav-item" data-view="sources">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 16.25"></path>
+                        <polyline points="8 16 12 20 16 16"></polyline>
+                        <line x1="12" y1="12" x2="12" y2="20"></line>
+                    </svg>
+                    <span>公共音源</span>
+                </a>
+
                 <!-- 新增：WebDAV同步菜单 -->
                 <a href="#" class="nav-item" data-view="webdav">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -523,6 +533,69 @@
                     </div>
                     <div id="data-stats" class="data-stats"></div>
                     <div id="data-content" class="data-content"></div>
+                </div>
+
+                <!-- 公共音源视图：管理员配置一次，所有用户自动可用 -->
+                <div id="view-sources" class="view">
+                    <div class="config-card glass" style="margin-bottom: 1.25rem;">
+                        <div class="config-card-header">
+                            <div class="config-card-icon"
+                                style="background: linear-gradient(135deg, #8b5cf6, #6d28d9);">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 16.25"></path>
+                                    <polyline points="8 16 12 20 16 16"></polyline>
+                                    <line x1="12" y1="12" x2="12" y2="20"></line>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="config-card-title">公共音源（一次配置，全员可用）</h3>
+                                <p class="config-card-desc">在这里添加的音源保存在公共目录，所有用户自动可见、可用于解析歌曲，无需各自导入</p>
+                            </div>
+                        </div>
+                        <div class="config-card-body">
+                            <p class="source-hint">
+                                存放位置 <code>data/users/source/_open/</code>。用户仍可在播放器里单独关闭某个公共源，或用同名私有源覆盖；此处的启用、删除会影响全部用户。上传后默认为禁用状态，勾选「添加后立即启用」可一步生效。
+                            </p>
+                            <div class="source-toolbar">
+                                <button id="btn-source-file" class="btn-primary">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        style="width:16px;height:16px;">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                        <polyline points="17 8 12 3 7 8"></polyline>
+                                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                                    </svg>
+                                    <span>上传脚本 .js</span>
+                                </button>
+                                <button id="btn-source-url" class="btn-secondary"><span>从 URL 导入</span></button>
+                                <label class="source-inline-check">
+                                    <input type="checkbox" id="source-auto-enable" checked> 添加后立即启用
+                                </label>
+                                <button id="refresh-sources-btn" class="btn-secondary" style="margin-left:auto;">
+                                    <span>刷新</span>
+                                </button>
+                            </div>
+                            <input type="file" id="source-file-input" accept=".js,text/javascript" class="hidden">
+                            <div id="source-url-row" class="source-url-row hidden">
+                                <input type="url" id="source-url-input" class="form-input config-input"
+                                    placeholder="https://example.com/source.js">
+                                <button id="btn-source-url-confirm" class="btn-primary">导入</button>
+                                <button id="btn-source-url-cancel" class="btn-secondary">取消</button>
+                            </div>
+                            <div id="sources-status" class="source-status hidden"></div>
+                        </div>
+                    </div>
+
+                    <div class="config-card glass">
+                        <div class="config-card-header">
+                            <div>
+                                <h3 class="config-card-title">已配置的公共音源</h3>
+                                <p class="config-card-desc">只有「已启用」的音源才会对所有用户生效</p>
+                            </div>
+                        </div>
+                        <div class="config-card-body">
+                            <div id="public-sources-list" class="source-list"></div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- 系统配置视图 -->

@@ -3,7 +3,7 @@ services:
     # 生产镜像由 GitHub Actions 构建成 amd64+arm64 双架构 manifest 后推送到 Docker Hub。
     # 镜像地址已填为 xxroot/tt-music:latest；换账号时改这一行即可，
     # 也可用 .env 里的 DOCKER_IMAGE 临时覆盖镜像地址 / 标签。
-    image: ${DOCKER_IMAGE:-xxroot/tt-music:latest}
+    image: ${DOCKER_IMAGE:-cjroot/tt-music:latest}
     container_name: tt-music
     restart: unless-stopped
     # 不写 platform：Docker Hub 上是双架构 manifest list，各设备 pull 时自动选匹配层。

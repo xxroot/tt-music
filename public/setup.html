@@ -204,10 +204,15 @@
     $('strength-text').textContent = admin.value ? '强度：' + labels[s - 1] : '';
   });
 
+  // 后台入口由服务端按 admin.path 计算，不硬编码 /admin
+  var adminEntry = '/admin';
   // 已初始化则直接跳后台（例如刷新了残留的页面）
   fetch('/api/setup/status', { cache: 'no-store' })
     .then(function (r) { return r.json(); })
-    .then(function (d) { if (!d.required) location.replace('/admin'); })
+    .then(function (d) {
+      if (d.adminEntry) adminEntry = d.adminEntry;
+      if (!d.required) location.replace(adminEntry);
+    })
     .catch(function () {});
 
   form.addEventListener('submit', async function (e) {
@@ -233,7 +238,7 @@
       if (!data.success) { setMsg(data.message || '设置失败，请重试', 'error'); return; }
       setMsg('设置成功，正在进入管理后台…', 'ok');
       admin.value = confirm.value = player.value = '';
-      setTimeout(function () { location.replace(data.redirect || '/admin'); }, 900);
+      setTimeout(function () { location.replace(data.redirect || adminEntry); }, 900);
     } catch (err) {
       setMsg('无法连接服务，请稍后重试', 'error');
     } finally {

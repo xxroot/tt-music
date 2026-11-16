@@ -1,0 +1,23 @@
+# 专供 NAS 图形化界面使用：「Docker → 项目 → 创建项目 → 创建 docker-compose.yml」
+# 把本文件内容整段复制进编辑器即可，不需要 .env，也不需要改任何字段。
+#
+# 与主模板 docker-compose.yml 的区别：
+#   1) 不含任何 ${...} 变量 —— 部分 NAS 的 compose 编辑器无法解析变量；
+#   2) 数据卷写死为绝对路径 —— 项目「路径」填哪里、GUI 会不会再建子目录，
+#      都不影响数据实际落盘位置。
+#
+# 首次启动后打开 http://<NAS的IP>:9527/ → 自动进入 /setup 设置管理员密码。
+# 密码写入 /vol1/1000/音乐/data/config.js，重启后仍有效。
+
+services:
+  tt-music:
+    image: xxroot/tt-music:latest
+    container_name: tt-music
+    restart: unless-stopped
+    # DLNA(SSDP 多播) / AirPlay(mDNS) 需要主机网络才能被局域网发现
+    network_mode: host
+    volumes:
+      # 账号、数据库、自定义源、配置、日志（含 /setup 设置的密码）
+      - "/vol1/1000/音乐/data:/server/data"
+      # 下载、缓存、本地音乐库
+      - "/vol1/1000/音乐/music:/server/music"

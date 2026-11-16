@@ -13,9 +13,12 @@ services:
     network_mode: host
     volumes:
       # 数据卷：账号、数据库、自定义源、配置、日志
-      - ./data:/server/data
       # 音乐卷：下载、缓存、本地库
-      - ./music:/server/music
+      # 默认 ./data、./music（相对本 compose 文件所在目录）。
+      # 想把数据放到 NAS 共享文件夹时，在 .env 里设 DATA_DIR / MUSIC_DIR 为绝对路径即可；
+      # 这样模板保持通用，多台设备各用各的路径，无需修改本文件。
+      - "${DATA_DIR:-./data}:/server/data"
+      - "${MUSIC_DIR:-./music}:/server/music"
     environment:
       # 路径 / 端口 / TZ / LOG_PATH 等已在镜像 ENV 中设定，此处不再重复。
       # 默认不注入任何密码：首次打开网页会进入 /setup 引导，由用户自己设置管理员密码。

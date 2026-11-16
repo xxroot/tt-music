@@ -20,7 +20,14 @@ const path = require('node:path');
 const SETUP_PATH = '/setup';
 const STATUS_API = '/api/setup/status';
 const INIT_API = '/api/setup/init';
-const ADMIN_ENTRY = '/admin';
+
+/**
+ * 后台入口必须与 server/server/server.js:796 的 effectiveAdminPath 完全一致：
+ *   admin.path 留空 → /admin（上游默认，此时根路径 / 会 302 到播放器 /music）
+ *   admin.path 配成 / 或 /manage → 后台就在那个路径
+ * 向导早期版本硬编码 /admin，用户改过后台路径后会跳到 404 / 播放器，故改为动态计算。
+ */
+const getAdminEntry = () => String(global.lx.config['admin.path'] ?? '') || '/admin';
 
 const WEAK_PASSWORDS = new Set([
     '12345678', '123456789', '1234567890', '11111111', '00000000',
@@ -229,7 +236,7 @@ const handleInit = async (req, res) => {
         global.lx.config['player.password'] = playerPassword;
         global.lx.config['player.enableAuth'] = enablePlayerAuth;
         console.log('[Setup] Admin password initialized via /setup');
-        sendJson(res, 200, { success: true, message: '设置完成', redirect: ADMIN_ENTRY });
+        sendJson(res, 200, { success: true, message: '设置完成', redirect: getAdminEntry() });
     }
     catch (e) {
         console.error('[Setup] Failed to persist config:', e);
@@ -260,13 +267,13 @@ const serveSetupPage = (res) => {
 const handleSetup = async (req, res, pathname) => {
     const required = isSetupRequired();
     if (pathname === STATUS_API && req.method === 'GET') {
-        sendJson(res, 200, { required });
+        sendJson(res, 200, { required, adminEntry: getAdminEntry() });
         return true;
     }
     if (!required) {
         // 已初始化后彻底关闭向导入口，避免留下未鉴权的设置接口
         if (pathname === SETUP_PATH || pathname === `${SETUP_PATH}/` || pathname.startsWith('/api/setup/')) {
-            res.writeHead(302, { 'Location': ADMIN_ENTRY });
+            res.writeHead(302, { 'Location': getAdminEntry() });
             res.end();
             return true;
         }

@@ -11,7 +11,7 @@
 
 services:
   tt-music:
-    image: xxroot/tt-music:latest
+    image: cjroot/tt-music:latest
     container_name: tt-music
     restart: unless-stopped
     # DLNA(SSDP 多播) / AirPlay(mDNS) 需要主机网络才能被局域网发现

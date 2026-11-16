@@ -1,77 +1,71 @@
-# LX Music Sync Server
+# LX Music Web
 
 <div align="center">
-  <img src="/icon.svg" width="100" height="100" alt="LX Sync Logo">
+  <img src="/download/assets/logo.svg" width="120" height="120" alt="LX Music Logo">
   <br>
-  <h1>LX Music Sync Server</h1>
+  <h1>LX Music Web</h1>
   <p>
+    <img src="https://img.shields.io/badge/build-passing-brightgreen?style=flat-square" alt="Build Status">
     <img src="https://img.shields.io/badge/hash-{{buildHash}}-%2310b981?style=flat-square" alt="Build Hash">
     <img src="https://img.shields.io/badge/version-{{version}}-blue?style=flat-square" alt="Version">
-    <a href="/LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-orange?style=flat-square" alt="License"></a>
+    <a href="/download/LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-orange?style=flat-square" alt="License"></a>
   </p>
 </div>
 
-基于 [lyswhut/lx-music-sync-server](https://github.com/lyswhut/lx-music-sync-server) 开发的增强版 LX Music 数据同步服务端。
+LX Music Sync Server 内置的高性能 Web 播放器，提供原生 App 般的音乐体验。
 
-本项目在原版基础上增加了强大的 **Web 管理界面**，支持用户管理、数据查看、快照回滚、WebDAV 备份等高级功能，让私有化部署更加便捷易用。
+## ✨ 核心特性
 
-## ✨ 主要特性
+- **现代化界面**: 采用清爽的现代化 UI 设计，支持 Glassmorphism 玻璃拟态效果。
+- **多源搜索**: 支持聚合搜索各大音乐平台的资源。
+- **歌单同步**: 与 LX Music 客户端数据完美互通，云端同步我的收藏。
+- **PWA 支持**: 支持安装为桌面/手机独立应用，离线也能秒开。
+- **自定义源**: 支持导入自定义源脚本，无限扩展音乐来源。
 
-### 📊 仪表盘
+## 📱 移动端适配
 
-直观的 Web 界面，无需敲命令即可管理服务状态。
+针对手机端触摸操作进行了深度优化，支持移动端侧边栏、播放详情页手势操作。
 
-### 👥 用户管理
+## 🔒 隐私安全
 
-支持通过界面添加、删除用户，修改密码，轻松管理多用户权限。
+支持开启访问密码，保护你的个人音乐隐私。
 
-### 🎵 数据查看与管理
+## 📜 项目协议
 
-- 在线查看所有用户的歌单和歌曲详情。
-- 支持按歌单、歌曲名搜索和排序。
-- 支持批量删除歌曲、删除歌单。
+本项目基于 Apache License 2.0 许可证发行，以下协议是对于 Apache License 2.0 的补充，如有冲突，以以下协议为准。
 
-### 💾 快照管理 (Snapshot)
+**词语约定**：本协议中的“本项目”指 LX Music Web 播放器；“使用者”指签署本协议的使用者；“官方音乐平台”指对本项目内置的包括酷我、酷狗、咪咕等音乐源的官方平台统称；“版权数据”指包括但不限于图像、音频、名字等在内的他人拥有所属版权的数据。
 
-- **查看快照**：浏览服务器自动生成的历史数据快照。
-- **下载备份**：将快照下载为 `lx_backup.json`，可直接导入 LX Music 客户端。
-- **一键回滚**：支持将服务器数据回滚到任意历史时刻。
+### 一、数据来源
 
-### 📂 文件与日志管理
+1. **官方平台**: 本项目的各官方平台在线数据来源原理是从其公开服务器中拉取数据，经过对数据简单地筛选与合并后进行展示，因此本项目不对数据的合法性、准确性负责。
+2. **音频数据**: 本项目本身没有获取某个音频数据的能力，所使用的在线音频数据来源来自设置内“自定义源”所选择的“源”返回的在线链接。本项目无法校验其准确性，使用过程中可能会出现播放异常。
+3. **其他数据**: 本项目的非官方平台数据（例如“我的列表”内列表）来自服务器存储数据，本项目不对这些数据的合法性、准确性负责。
 
-内置简易文件管理器，方便在线查看、下载和管理服务器上的日志和配置文件。
+### 二、免责声明
 
-### ⚙️ 系统配置
+1. **版权数据**: 使用本项目的过程中可能会产生版权数据。对于这些版权数据，本项目不拥有它们的所有权。为了避免侵权，使用者务必在 **24 小时内** 清除使用本项目的过程中所产生的版权数据。
+2. **责任承担**: 由于使用本项目产生的包括由于本协议或由于使用或无法使用本项目而引起的任何性质的任何直接、间接、特殊、偶然或结果性损害由使用者负责。
+3. **法律法规**: 本项目完全免费，且开源发布于 GitHub 面向全世界人用作对技术的学习交流。**禁止**在违反当地法律法规的情况下使用本项目。对于使用者在明知或不知当地法律法规不允许的情况下使用本项目所造成的任何违法违规行为由使用者承担。
 
-支持通过 Web 界面修改系统配置（端口、代理、密码等），无需手动编辑 `config.js` 文件。
+### 三、其他
 
-### ☁️ WebDAV 同步备份
-
-- 支持将服务器数据自动/手动备份到 WebDAV 网盘（如坚果云、Nextcloud、Alist 等）。
-- 支持从 WebDAV 云端恢复数据，确保数据安全。
-
-### 🎧 Web 播放器
-
-**[Web 播放器](/download)**：内置功能强大的 Web 端音乐播放器，支持多源搜索、歌单同步、歌词显示等，随时随地享受音乐。
+1. **资源使用**: 本项目内使用的部分包括但不限于字体、图片等资源来源于互联网。如果出现侵权可联系本项目移除。
+2. **非商业性质**: 本项目仅用于对技术可行性的探索及研究，不接受任何商业（包括但不限于广告等）合作及捐赠。
+3. **接受协议**: 若你使用了本项目，即代表你接受本协议。
 
 ## 🤝 致谢
 
-本项目修改自 [lyswhut/lx-music-sync-server](https://github.com/lyswhut/lx-music-sync-server)。
-
-WEB页端LX的实现参考 [lx-music-desktop](https://github.com/lyswhut/lx-music-desktop)。
-
-接口实现通过 [musicsdk](https://github.com/lyswhut/lx-music-desktop) 实现。
+本项目的 Web 播放器参考了 [lx-music-desktop](https://github.com/lyswhut/lx-music-desktop) 的设计与实现。
 
 感谢 [lyswhut](https://github.com/lyswhut) 开发了如此优秀的开源音乐软件。
 
-<div align="center" style="margin-top: 30px;">
-  <a href="https://github.com/XCQ0607/lxserver" target="_blank" style="display: inline-block; padding: 12px 24px; background-color: #10b981; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
-    <svg viewBox="0 0 24 24" fill="currentColor" style="width: 20px; height: 20px; vertical-align: bottom; margin-right: 8px;">
-        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-    </svg>
-    GitHub 仓库
-  </a>
+核心接口基于 `musicsdk` 实现。
 
+<div align="center" style="margin-top: 20px;">
+  <a href="https://github.com/xxroot/tt-music" target="_blank" style="display: inline-block; padding: 10px 20px; background-color: #10b981; color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">
+    <i class="fab fa-github"></i> GitHub 仓库
+  </a>
 </div>
 
-Copyright © 2026 [xcq0607](https://github.com/xcq0607)
+Copyright © 2026 [xxroot](https://github.com/xxroot/tt-music) · 基于 [xcq0607/lxserver](https://github.com/XCQ0607/lxserver)（Apache-2.0）

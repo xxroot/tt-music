@@ -1,0 +1,28 @@
+# 依赖目录（基线镜像已内置，构建时不安装）
+/node_modules/
+
+# 运行时数据与用户内容（挂载卷，含账号、密码哈希、上传源、数据库）
+/data/
+/music/
+
+# 本地配置（含明文密码，从 config.example.js 复制生成）
+/config.js
+
+# 运行时产物
+/logs/
+/download/
+/cache/
+/temp/
+/backup/
+*.log
+*.tmp
+
+# 系统垃圾
+**/.DS_Store
+Thumbs.db
+desktop.ini
+
+# 环境变量（.env 含明文密码，绝不入库）
+.env
+.env.*
+!.env.example

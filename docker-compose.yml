@@ -1,0 +1,28 @@
+services:
+  tt-music:
+    # 生产镜像由 GitHub Actions 构建成 amd64+arm64 双架构 manifest 后推送到 Docker Hub。
+    # ★ 上传 GitHub 前把 CHANGE_ME 改成你的 Docker Hub 用户名（只改这一处，全设备共用）。
+    # 也可用 .env 里的 DOCKER_IMAGE 临时覆盖镜像地址 / 标签。
+    image: ${DOCKER_IMAGE:-CHANGE_ME/tt-music:latest}
+    container_name: tt-music
+    restart: unless-stopped
+    # 不写 platform：Docker Hub 上是双架构 manifest list，各设备 pull 时自动选匹配层。
+    # host 网络：DLNA(SSDP 多播) 和 AirPlay(mDNS) 需要主机网络才能被发现。
+    # Windows Docker Desktop 需 4.34+ 且在设置中启用 host networking 才能本地验证。
+    # host 网络下 EXPOSE 不生效（无害），端口由服务自身绑定 0.0.0.0:9527。
+    network_mode: host
+    volumes:
+      # 数据卷：账号、数据库、自定义源、配置、日志
+      - ./data:/server/data
+      # 音乐卷：下载、缓存、本地库
+      - ./music:/server/music
+    environment:
+      # 路径 / 端口 / TZ / LOG_PATH 等已在镜像 ENV 中设定，此处不再重复。
+      # 默认不注入任何密码：首次打开网页会进入 /setup 引导，由用户自己设置管理员密码。
+      # 如需预置（跳过向导 / 无人值守部署），在 .env 中填写即可；
+      # 注意：环境变量在 server/index.js:171-259 中最后应用，优先级高于 data/config.js，
+      # 预置后会覆盖向导设置过的密码。
+      - "FRONTEND_PASSWORD=${ADMIN_PASSWORD:-}"
+      - "WEBPLAYER_PASSWORD=${PLAYER_PASSWORD:-}"
+      # 变量名 LX_USER_<用户名> 中的用户名即同步账号；留空则不创建同步用户
+      - "LX_USER_admin=${SYNC_PASSWORD:-}"

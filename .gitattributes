@@ -1,0 +1,5 @@
+# 源码会被 COPY 进 Linux 容器，且 GitHub Actions 在 Linux runner 上构建。
+# 统一用 LF，避免 Windows checkout 时被转成 CRLF 导致 Dockerfile / YAML / JS
+# 行尾带上 \r（尤其是 Dockerfile 指令与 compose/workflow 的值解析）。
+# text=auto 会让 Git 自动把 PNG / WAV 等识别为二进制、不做换行转换。
+* text=auto eol=lf

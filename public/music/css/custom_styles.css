@@ -1,0 +1,1202 @@
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Glassmorphism utilities */
+.glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.active-tab {
+    background-color: var(--c-50);
+    color: var(--c-600);
+    border-right: 3px solid var(--c-600);
+}
+
+.active-sub-item {
+    color: var(--c-600) !important;
+}
+
+.active-sub-item i {
+    color: var(--c-600) !important;
+}
+
+.active-option {
+    background-color: var(--c-500) !important;
+    color: white !important;
+    box-shadow: 0 4px 12px var(--c-200);
+}
+
+/* Lyric View Styles */
+.mask-image-gradient {
+    mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+}
+
+.mask-image-linear-fade {
+    mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* 彻底消除侧边抽屉在隐藏状态下的阴影与边缘线残留 */
+#queue-drawer.translate-x-full,
+#cache-drawer.translate-x-full,
+#download-drawer.translate-x-full {
+    box-shadow: none !important;
+    border-left-width: 0 !important;
+}
+
+/* Setting Tooltip Styles */
+.setting-tooltip-trigger {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-left: 0.375rem;
+    color: #9ca3af;
+    cursor: pointer;
+    transition: color 0.2s;
+    vertical-align: middle;
+}
+
+.setting-tooltip-trigger:hover {
+    color: var(--c-500);
+}
+
+.setting-tooltip-content {
+    position: absolute;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    width: 16rem;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--c-100);
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    font-size: 0.75rem;
+    font-weight: normal;
+    line-height: 1.4;
+    color: #4b5563;
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark .setting-tooltip-content {
+    background: rgba(31, 41, 55, 0.95);
+    border-color: rgba(75, 85, 99, 0.3);
+    color: #d1d5db;
+}
+
+/* Triangle notch */
+.setting-tooltip-content::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px;
+    border-style: solid;
+    border-color: rgba(255, 255, 255, 0.95) transparent transparent transparent;
+}
+
+.dark .setting-tooltip-content::after {
+    border-color: rgba(31, 41, 55, 0.95) transparent transparent transparent;
+}
+
+/* Show on hover (Desktop) */
+@media (hover: hover) {
+    .setting-tooltip-trigger:hover .setting-tooltip-content {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* Active state for mobile click */
+.setting-tooltip-trigger.is-active .setting-tooltip-content {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+}
+
+.lyric-line {
+    font-family: var(--lyric-font-family, inherit);
+    font-size: var(--lyric-font-size, 1.25rem);
+    line-height: 1.4;
+    /* 基础行高由内部元素撑开 */
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    cursor: pointer;
+    opacity: 0.6;
+    transform-origin: left center;
+
+    /* Wrapping constraints */
+    width: fit-content;
+    max-width: 100%;
+    padding: 0.6em 2rem 0.6em 1.5rem;
+    /* 使用 em，随字号缩放行间距 */
+    box-sizing: border-box;
+    white-space: normal;
+    overflow-wrap: break-word;
+}
+
+/* Centered origin for mobile */
+@media (max-width: 1024px) {
+    .lyric-line {
+        transform-origin: center center;
+        margin: 0 auto;
+    }
+}
+
+/* Force center origin/alignment when cover is hidden (desktop) */
+.lyrics-centered .lyric-line {
+    transform-origin: center center !important;
+    margin: 0 auto;
+    text-align: center !important;
+}
+
+.lyrics-centered .lyric-line span {
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+.lyric-line:hover {
+    opacity: 0.8;
+}
+
+.lyric-line.active {
+    opacity: 1;
+    font-weight: 800;
+    color: var(--c-500);
+    z-index: 10;
+    /* 确保高亮行在最上层，阴影不被覆盖 */
+    overflow: visible;
+    /* 允许阴影和放大后的文字溢出显示 */
+    /* transform: scale(1.15); REMOVED */
+    font-size: calc(var(--lyric-font-size, 1.25rem) * 1.3);
+}
+
+/* 当歌词居中展示时，移除封面留下的间距占位 */
+#player-detail-container.has-centered-lyrics {
+    gap: 0 !important;
+}
+
+/* Karaoke Word Styles */
+.lyric-line .word-item {
+    position: relative;
+    display: inline-block;
+    transition: filter 0.2s ease-out;
+    white-space: pre-wrap;
+    pointer-events: none;
+}
+
+.lyric-line.active .word-item {
+    /* 播放过的部分(左侧)是主题色，未播放(右侧)为浅灰色
+       实现平滑的扫过效果 */
+    background: linear-gradient(to right,
+    var(--c-500) var(--word-progress, 0%),
+    #999 var(--word-progress, 0%));
+    background-clip: text;
+    -webkit-background-clip: text;
+    /* 必须保持透明，才能显示底层的背景渐变！ */
+    -webkit-text-fill-color: transparent;
+}
+
+/* 正在扫过（演唱中）及已唱过去的字，显示主题荧光 */
+.enable-lyric-glow .lyric-line.active .word-item.playing,
+.enable-lyric-glow .lyric-line.active .word-item.passed {
+    filter: drop-shadow(0 4px 12px var(--c-200));
+}
+
+.lyric-line.active .extended {
+    opacity: 0.8;
+    font-weight: 500;
+}
+
+/* 对于不支持逐字的普通歌词及其翻译，直接点亮 (没有平滑动效) */
+.lyric-line.active .plain-lyric {
+    color: var(--c-500);
+}
+
+.lyric-line.active .extended {
+    opacity: 0.8;
+    font-weight: 500;
+    color: var(--c-500);
+}
+
+/* 对于支持逐字的歌词的翻译/罗马音，现在改为逐字点亮 */
+.lyric-line.has-words.active .extended {
+    color: #9CA3AF;
+    /* gray-400 */
+    background: none;
+    -webkit-text-fill-color: initial;
+    background-clip: initial;
+}
+
+.lyric-line.has-words.active .extended .ext-item {
+    display: inline-block;
+    background: linear-gradient(to right,
+    var(--c-500) var(--word-progress, 0%),
+    #9CA3AF var(--word-progress, 0%));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: none;
+    /* 由 JS 循环控制平滑度 */
+    white-space: pre;
+}
+
+/* 仅对正在点亮或已点亮的翻译字符应用荧光效果，保持 0 2px 8px 的朦胧参数 */
+.enable-lyric-glow .lyric-line.active .extended .ext-item.playing,
+.enable-lyric-glow .lyric-line.active .extended .ext-item.passed {
+    filter: drop-shadow(0 2px 8px var(--c-200));
+}
+
+/* 普通歌词(非逐字)或没有切分的歌词依然维持整体荧光 */
+.enable-lyric-glow .lyric-line.active .plain-lyric {
+    filter: drop-shadow(0 2px 8px var(--c-200));
+}
+
+/* Scroll target - 用户滚动时对准的歌词 */
+.lyric-line.scroll-target {
+    color: #f97316;
+    /* orange-500 */
+    opacity: 1;
+    /* transform: scale(1.1); REMOVED */
+    font-size: calc(var(--lyric-font-size, 1.25rem) * 1.15);
+    font-weight: 700;
+}
+
+.enable-lyric-glow .lyric-line.scroll-target {
+    text-shadow: 0 2px 10px rgba(249, 115, 22, 0.2);
+}
+
+/* Mobile Sidebar Transition */
+#mobile-sidebar-backdrop {
+    transition: opacity 0.3s ease-in-out;
+}
+
+aside {
+    transition: transform 0.3s ease-in-out;
+}
+
+@keyframes marquee {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+.animate-marquee {
+    display: inline-block;
+    animation: marquee 10s linear infinite;
+}
+
+/* Default: Always Run (for Touch/Mobile) */
+.hover-scroll-paused {
+    animation-play-state: running;
+}
+
+/* Desktop: Pause by default, run on hover */
+@media (hover: hover) {
+    .hover-scroll-paused {
+        animation-play-state: paused;
+    }
+
+    .group:hover .hover-scroll-paused {
+        animation-play-state: running;
+    }
+}
+
+/* 悬停滚动跑马灯：默认截断显示省略号，鼠标悬停时滚动 (Hover-to-scroll marquee) */
+.hover-scroll-marquee {
+    position: relative;
+    overflow: hidden;
+}
+
+.hover-scroll-marquee-text {
+    display: inline-block;
+    white-space: nowrap;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 桌面端：悬停时取消截断并滚动 */
+@media (hover: hover) {
+    .hover-scroll-marquee:hover .hover-scroll-marquee-text {
+        max-width: none;
+        text-overflow: clip;
+        animation: marquee 10s linear infinite;
+    }
+}
+
+.force-visible {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* 菜单选中项样式 */
+.active-option {
+    background-color: var(--c-500) !important;
+    color: #ffffff !important;
+}
+
+[data-appearance="dark"] .active-option {
+    background-color: var(--c-600) !important;
+    color: #ffffff !important;
+}
+
+.active-option i,
+.active-option span {
+    color: #ffffff !important;
+}
+
+/* Sleep Timer Styles */
+.timer-preset-btn {
+    padding: 0.75rem 1rem;
+    background-color: #f9fafb;
+    color: #4b5563;
+    font-weight: 700;
+    border-radius: 1rem;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+    font-size: 0.875rem;
+    text-align: center;
+}
+
+.timer-preset-btn:hover {
+    background-color: #ecfdf5;
+    color: #059669;
+    border-color: #d1fae5;
+    transform: translateY(-1px);
+}
+
+.timer-preset-btn:active {
+    transform: translateY(0);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.animate-slide-up {
+    animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Lyric Font Size Variable */
+:root {
+    --lyric-font-size: 1.25rem;
+}
+
+.lyric-line .font-lrc {
+    font-size: 1.1em !important;
+    /* 基础字号略微放大 */
+    line-height: 1.4;
+    display: block;
+}
+
+.lyric-line .extended {
+    font-size: 0.75em !important;
+    line-height: 1.4;
+    margin-top: 0.4em;
+    /* 翻译与原文的间距：随字号缩放 */
+    display: block;
+    opacity: 0.8;
+}
+
+/* 隐藏滚动条但保留滚动能力 */
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari and Opera */
+}
+
+/* Expand Button Faint Style */
+#btn-expand-panel.faint,
+#btn-toggle-lyrics.faint {
+    opacity: 0.15 !important;
+    background-color: rgba(255, 255, 255, 0.4) !important;
+    border-color: rgba(200, 200, 200, 0.2) !important;
+}
+
+#btn-expand-panel.faint:hover,
+#btn-toggle-lyrics.faint:hover {
+    opacity: 1 !important;
+    background-color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(16, 185, 129, 0.3);
+}
+
+/* Detail Title multi-line support */
+#detail-title {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    white-space: normal !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.25;
+}
+
+#detail-title-container {
+    white-space: normal !important;
+}
+
+/* Lyric Card Share - Button States */
+.lc-layout-btn,
+.lc-color-btn,
+.lc-lines-btn {
+    color: #6b7280;
+    border-color: #e5e7eb;
+    background: #f9fafb;
+}
+
+.lc-layout-btn:hover,
+.lc-color-btn:hover,
+.lc-lines-btn:hover {
+    border-color: var(--c-300);
+    color: var(--c-600);
+    background: var(--c-50);
+}
+
+.lc-btn-active {
+    border-color: var(--c-500) !important;
+    color: var(--c-600) !important;
+    background: var(--c-50) !important;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-500) 15%, transparent);
+}
+
+/* Lyric Card - 主题色滑动条 */
+.lc-range-input {
+    accent-color: var(--c-500);
+}
+
+/* Sortable Styles (Direct Move Mode) */
+.sortable-ghost-solid {
+    opacity: 1 !important;
+    border: 2px solid var(--c-500) !important;
+    background: var(--c-50) !important;
+    box-shadow: inset 0 0 0 2px var(--c-100) !important;
+}
+
+.sortable-chosen-item {
+    opacity: 1 !important;
+    position: relative;
+    z-index: 10;
+}
+
+.sortable-drag-item {
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+.select-none {
+    user-select: none !important;
+    -webkit-user-select: none !important;
+}
+
+/* Silky Animation for Player Detail */
+#view-player-detail {
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease-out !important;
+    will-change: transform, opacity;
+}
+
+#view-player-detail.translate-y-\[100\%\] #player-detail-container {
+    transform: scale(0.92) translateY(40px);
+    opacity: 0;
+}
+
+#player-detail-container {
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease-out;
+    will-change: transform, opacity;
+}
+
+#player-footer {
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    will-change: transform;
+}
+
+/* Buffering status dots animation */
+@keyframes loading-bounce {
+
+    0%,
+    80%,
+    100% {
+        transform: translateY(0);
+        opacity: 0.5;
+    }
+
+    40% {
+        transform: translateY(-4px);
+        opacity: 1;
+    }
+}
+
+.animate-loading-dots span {
+    display: inline-block;
+    animation: loading-bounce 1.4s infinite ease-in-out;
+}
+
+.animate-loading-dots span:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.animate-loading-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.animate-loading-dots span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+/* Search Match Highlights - Consistently use theme color-mix */
+.search-match {
+    background-color: color-mix(in srgb, var(--c-500) 10%, transparent) !important;
+    border-radius: 0.75rem;
+}
+
+.search-current {
+    background-color: color-mix(in srgb, var(--c-500) 25%, transparent) !important;
+    box-shadow: inset 0 0 0 2px var(--c-500) !important;
+    border-radius: 0.75rem;
+}
+
+.row-selected {
+    background-color: color-mix(in srgb, var(--c-500) 15%, transparent) !important;
+    border-radius: 0.75rem;
+}
+
+/* Dark mode refinements: Use deeper theme mix instead of plain white */
+:root[data-appearance="dark"] .search-match {
+    background-color: color-mix(in srgb, var(--c-500) 12%, transparent) !important;
+}
+
+:root[data-appearance="dark"] .search-current {
+    background-color: color-mix(in srgb, var(--c-500) 30%, transparent) !important;
+    box-shadow: inset 0 0 0 2px var(--c-500), 0 0 15px color-mix(in srgb, var(--c-500) 30%, transparent) !important;
+}
+
+:root[data-appearance="dark"] .row-selected {
+    background-color: color-mix(in srgb, var(--c-500) 18%, transparent) !important;
+}
+
+/* EQ bar animation for playing indicator */
+@keyframes eq-bar {
+    0%, 100% {
+        height: 25%;
+    }
+    50% {
+        height: 100%;
+    }
+}
+
+.animate-eq-bar {
+    animation: eq-bar 0.8s ease-in-out infinite;
+}
+
+/* 响应式侧边栏优化：针对垂直高度不足的情况 */
+
+/* ===== 侧边栏收缩模式 ===== */
+#main-sidebar.sidebar-collapsed {
+    width: 4rem !important;
+}
+
+#main-sidebar.sidebar-collapsed .sidebar-label,
+#main-sidebar.sidebar-collapsed .sidebar-collapsible {
+    display: none !important;
+}
+
+#main-sidebar.sidebar-collapsed nav a,
+#main-sidebar.sidebar-collapsed nav div[onclick],
+#main-sidebar.sidebar-collapsed nav > ul > li > a,
+#main-sidebar.sidebar-collapsed nav > ul > li > div {
+    justify-content: center !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+#main-sidebar.sidebar-collapsed nav a i,
+#main-sidebar.sidebar-collapsed nav div[onclick] i:first-child {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+#main-sidebar.sidebar-collapsed #sidebar-collapse-btn i {
+    transform: rotate(180deg);
+}
+
+#main-sidebar.sidebar-collapsed .sidebar-copyright-text {
+    display: none !important;
+}
+
+#main-sidebar.sidebar-collapsed .sidebar-song-info-wrapper {
+    display: none !important;
+}
+
+#main-sidebar.sidebar-collapsed h1 {
+    display: none !important;
+}
+
+/* 收缩模式下头部减小四周留白，Logo 与展开按钮垂直堆叠居中，避免 Logo 被挤压变形 */
+#main-sidebar.sidebar-collapsed .sidebar-header {
+    padding: 0.125rem !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    gap: 0.125rem;
+}
+
+#main-sidebar.sidebar-collapsed .sidebar-header-logo {
+    margin-right: 0 !important;
+    flex-shrink: 0 !important;
+}
+
+#main-sidebar.sidebar-collapsed #sidebar-collapse-btn {
+    position: static !important;
+    transform: none !important;
+}
+
+@media (max-height: 845px) {
+
+    /* 压缩导航栏间距 */
+    #main-sidebar nav ul li a,
+    #main-sidebar nav ul li div[onclick] {
+        padding-top: 0.4rem !important;
+        padding-bottom: 0.4rem !important;
+    }
+
+    /* 迷你播放器改为横向布局 */
+    #sidebar-song-info:not(.hidden) {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 0.75rem !important;
+        padding: 0.75rem 1rem !important;
+        text-align: left !important;
+    }
+
+    #sidebar-cover {
+        width: 3.25rem !important;
+        height: 3.25rem !important;
+        margin-bottom: 0 !important;
+        border-radius: 0.5rem !important;
+    }
+
+    #sidebar-song-info > div.text-center {
+        text-align: left !important;
+        align-items: flex-start !important;
+        flex: 1;
+        min-width: 0;
+    }
+
+    #sidebar-song-name {
+        font-size: 0.8rem !important;
+        line-height: 1.25;
+    }
+
+    #sidebar-singer {
+        font-size: 0.7rem !important;
+        line-height: 1.2;
+    }
+
+    /* 压缩底部版权信息 */
+    .sidebar-copyright-text {
+        padding-top: 0.5rem !important;
+        padding-bottom: 0.5rem !important;
+    }
+}
+
+/* Audio info tags in sidebar & footer - 全局生效，不受媒体查询限制 */
+#sidebar-audio-info .audio-tag,
+#footer-audio-info .audio-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.05rem;
+    font-size: 0.6rem;
+    color: var(--c-500, #6b7280);
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    white-space: nowrap;
+    letter-spacing: 0.01em;
+    opacity: 0.9;
+}
+
+/* 音质标签使用彩色文字 (Quality tag with colored text) */
+#sidebar-audio-info .audio-tag-quality,
+#footer-audio-info .audio-tag-quality {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.6rem;
+    color: var(--color-primary, #10b981);
+    white-space: nowrap;
+    letter-spacing: 0.01em;
+    opacity: 0.95;
+}
+
+/* 音质标签后不需要 | 分隔符，但保留其他标签的 | 分隔符 */
+#sidebar-audio-info .audio-tag-quality::after,
+#footer-audio-info .audio-tag-quality::after {
+    content: '|';
+    font-size: 0.5rem;
+    color: var(--c-500, #6b7280);
+    font-weight: 400;
+    opacity: 0.9;
+}
+
+/* 用 | 分隔每个标签 (Pipe separator between tags) */
+#sidebar-audio-info .audio-tag:not(:last-child)::after,
+#footer-audio-info .audio-tag:not(:last-child)::after {
+    content: '|';
+    /*margin: 0 0.3rem;*/
+    font-size: 0.5rem;
+}
+
+/* === 批量模式 checkbox 可见性控制 ===
+   默认隐藏所有 batch-checkbox；
+   当容器添加 .batch-mode class 时显示。
+   覆盖范围：搜索结果、歌单详情、排行榜、歌手/专辑钻取 */
+#view-search .batch-checkbox,
+#songlist-detail-view .batch-checkbox,
+#lb-songs-container .batch-checkbox {
+    display: none;
+}
+
+#view-search.batch-mode .batch-checkbox,
+#songlist-detail-view.batch-mode .batch-checkbox,
+#lb-songs-container.batch-mode .batch-checkbox {
+    display: inline-block;
+}
+
+/* ===== 在线电台分页控件 (Online Radio Pagination) ===== */
+.pg-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 24px;
+    padding: 0 4px;
+    font-size: 11px;
+    font-weight: 500;
+    border-radius: 4px;
+    border: 1px solid var(--c-200, #e5e7eb);
+    background: var(--c-panel, #fff);
+    color: var(--c-text-muted, #6b7280);
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.pg-btn:hover:not(:disabled) {
+    background: var(--c-50, #f0fdf4);
+    border-color: var(--c-400, #34d399);
+    color: var(--c-600, #059669);
+}
+
+.pg-btn:disabled {
+    opacity: 0.35;
+    cursor: default;
+}
+
+.pg-btn.pg-active {
+    background: var(--c-500, #10b981);
+    border-color: var(--c-500, #10b981);
+    color: #fff;
+}
+
+[data-appearance="dark"] .pg-btn {
+    border-color: var(--c-700, #374151);
+    background: var(--c-800, #1f2937);
+    color: var(--c-text-muted, #9ca3af);
+}
+
+[data-appearance="dark"] .pg-btn:hover:not(:disabled) {
+    border-color: var(--c-500, #10b981);
+}
+
+[data-appearance="dark"] .pg-btn.pg-active {
+    background: var(--c-600, #059669);
+    border-color: var(--c-600, #059669);
+}
+
+/* ===== 收藏歌曲 3D 封面弹出特效 (Favorites 3D Cover Pop-out) ===== */
+#mobile-player-cover-container {
+    perspective: 1000px;
+    transform-style: preserve-3d;
+}
+
+#mobile-player-cover-container.fav-3d-active {
+    animation: fav3dFloat 4s ease-in-out infinite;
+    box-shadow:
+        0 25px 60px -10px rgba(0, 0, 0, 0.5),
+        0 0 40px rgba(16, 185, 129, 0.15);
+}
+
+@keyframes fav3dFloat {
+    0%, 100% {
+        transform: perspective(1000px) rotateX(5deg) rotateY(-3deg) translateZ(30px) scale(1.03);
+    }
+    25% {
+        transform: perspective(1000px) rotateX(3deg) rotateY(2deg) translateZ(40px) scale(1.05);
+    }
+    50% {
+        transform: perspective(1000px) rotateX(-3deg) rotateY(3deg) translateZ(35px) scale(1.04);
+    }
+    75% {
+        transform: perspective(1000px) rotateX(2deg) rotateY(-2deg) translateZ(45px) scale(1.05);
+    }
+}
+
+/* ===== 菜单字体精致化 (Menu Typography Refinement) ===== */
+/* 侧边栏主菜单项字号下调、加字间距 */
+#main-sidebar .sidebar-label {
+    font-size: 0.8125rem;        /* 13px,原 16px */
+    font-weight: 500;
+    letter-spacing: 0.025em;
+}
+
+/* 顶部页面标题字号微调 */
+.active-tab-title {
+    letter-spacing: 0.03em;
+}
+
+/* ===== TT-Music 品牌标题渐变光晕 (Brand Title Gradient) ===== */
+.brand-title {
+    background: linear-gradient(135deg, var(--c-500) 0%, var(--c-400) 60%, var(--c-300) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    filter: drop-shadow(0 2px 10px color-mix(in srgb, var(--c-500) 30%, transparent));
+    transition: filter 0.3s ease;
+}
+
+/* hover 时光晕增强 */
+#main-sidebar .h-16:hover .brand-title {
+    filter: drop-shadow(0 2px 16px color-mix(in srgb, var(--c-500) 50%, transparent));
+}
+
+/* ===== 侧边栏菜单精致微交互 (Sidebar Hover Indicator) ===== */
+#main-sidebar nav > ul > li > a,
+#main-sidebar nav > ul > li > div[onclick] {
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                background-color 0.2s ease;
+}
+
+/* 左侧滑动指示条(默认隐藏) */
+#main-sidebar nav > ul > li > a::before,
+#main-sidebar nav > ul > li > div[onclick]::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 50%;
+    width: 3px; height: 0;
+    background: linear-gradient(to bottom, var(--c-400), var(--c-600));
+    border-radius: 0 3px 3px 0;
+    transform: translateY(-50%);
+    transition: height 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 8px color-mix(in srgb, var(--c-500) 60%, transparent);
+}
+
+/* hover:指示条展开 + 微平移 */
+#main-sidebar nav > ul > li > a:hover::before,
+#main-sidebar nav > ul > li > div[onclick]:hover::before {
+    height: 60%;
+}
+
+#main-sidebar nav > ul > li > a:hover,
+#main-sidebar nav > ul > li > div[onclick]:hover {
+    transform: translateX(2px);
+}
+
+/* 激活态:渐变背景 + 指示条常驻 + 移除原右侧边框 */
+#main-sidebar nav > ul > li > a.active-tab {
+    background: linear-gradient(90deg,
+        color-mix(in srgb, var(--c-50) 90%, transparent) 0%,
+        transparent 100%);
+    border-right: none;
+}
+
+#main-sidebar nav > ul > li > a.active-tab::before {
+    height: 70%;
+    box-shadow: 0 0 12px color-mix(in srgb, var(--c-500) 80%, transparent);
+}
+
+/* ===== 菜单图标 hover 微动画 (Icon Micro Animation) ===== */
+#main-sidebar nav > ul > li > a i.fas,
+#main-sidebar nav > ul > li > div[onclick] > div > i.fas:first-child {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+                color 0.2s ease;
+}
+
+#main-sidebar nav > ul > li > a:hover i.fas,
+#main-sidebar nav > ul > li > div[onclick]:hover > div > i.fas:first-child {
+    transform: scale(1.18) rotate(-6deg);
+}
+
+#main-sidebar nav > ul > li > a.active-tab i.fas {
+    transform: scale(1.1);
+}
+
+/* ===== 深色模式适配 (Dark Mode) ===== */
+[data-appearance="dark"] #main-sidebar nav > ul > li > a.active-tab {
+    background: linear-gradient(90deg,
+        color-mix(in srgb, var(--c-900) 45%, transparent) 0%,
+        transparent 100%);
+}
+
+/* 收缩模式下隐藏指示条与平移,避免与居中布局冲突 */
+#main-sidebar.sidebar-collapsed nav > ul > li > a::before,
+#main-sidebar.sidebar-collapsed nav > ul > li > div[onclick]::before {
+    display: none;
+}
+
+#main-sidebar.sidebar-collapsed nav > ul > li > a:hover,
+#main-sidebar.sidebar-collapsed nav > ul > li > div[onclick]:hover {
+    transform: none;
+}
+
+/* ===== 二级菜单字体精致化 (Sub-menu Typography) ===== */
+/* 二级菜单字号下调,形成与一级菜单(13px)的层次 */
+#main-sidebar nav > ul > li > ul > li > a span {
+    font-size: 0.75rem;        /* 12px,原 text-sm 14px */
+    font-weight: 500;
+    letter-spacing: 0.02em;
+}
+
+/* ===== 二级菜单精致微交互 (Sub-menu Hover Indicator) ===== */
+/* 不设 overflow:hidden,让圆点光晕完整显示;圆角背景由 rounded-lg 保证 */
+#main-sidebar nav > ul > li > ul > li > a {
+    position: relative;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                background-color 0.2s ease;
+}
+
+/* 左侧圆点指示(比一级竖条更精致,默认隐藏) */
+#main-sidebar nav > ul > li > ul > li > a::before {
+    content: '';
+    position: absolute;
+    left: 0.5rem; top: 50%;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--c-500);
+    transform: translateY(-50%) scale(0);
+    transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 0 6px color-mix(in srgb, var(--c-500) 60%, transparent);
+}
+
+/* hover:圆点弹出 + 微平移 + 背景着色 */
+#main-sidebar nav > ul > li > ul > li > a:hover::before {
+    transform: translateY(-50%) scale(1);
+}
+
+#main-sidebar nav > ul > li > ul > li > a:hover {
+    transform: translateX(2px);
+    background: color-mix(in srgb, var(--c-50) 60%, transparent);
+}
+
+/* 激活态:圆点常驻 + 渐变背景 */
+#main-sidebar nav > ul > li > ul > li > a.active-sub-item::before {
+    transform: translateY(-50%) scale(1);
+    box-shadow: 0 0 8px color-mix(in srgb, var(--c-500) 80%, transparent);
+}
+
+#main-sidebar nav > ul > li > ul > li > a.active-sub-item {
+    background: linear-gradient(90deg,
+        color-mix(in srgb, var(--c-50) 80%, transparent) 0%,
+        transparent 100%);
+}
+
+/* ===== 二级菜单图标 hover 微动画 (Sub-menu Icon Animation) ===== */
+#main-sidebar nav > ul > li > ul > li > a i.fas {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+                color 0.2s ease;
+}
+
+#main-sidebar nav > ul > li > ul > li > a:hover i.fas {
+    transform: scale(1.15);
+}
+
+#main-sidebar nav > ul > li > ul > li > a.active-sub-item i.fas {
+    transform: scale(1.08);
+}
+
+/* ===== 二级菜单深色模式适配 (Sub-menu Dark Mode) ===== */
+[data-appearance="dark"] #main-sidebar nav > ul > li > ul > li > a:hover {
+    background: color-mix(in srgb, var(--c-900) 40%, transparent);
+}
+
+[data-appearance="dark"] #main-sidebar nav > ul > li > ul > li > a.active-sub-item {
+    background: linear-gradient(90deg,
+        color-mix(in srgb, var(--c-900) 50%, transparent) 0%,
+        transparent 100%);
+}
+
+/* 收缩模式下隐藏二级菜单指示与平移 */
+#main-sidebar.sidebar-collapsed nav > ul > li > ul > li > a::before {
+    display: none;
+}
+
+#main-sidebar.sidebar-collapsed nav > ul > li > ul > li > a:hover {
+    transform: none;
+}
+
+/* ===== 收藏子菜单精致微交互 (Favorites Sub-menu Hover Indicator) ===== */
+/* 收藏列表项为动态注入的 div[data-sidebar-list-id]，需单独适配与本地库子菜单一致的效果 */
+#my-lists-container [data-sidebar-list-id] {
+    position: relative;
+    border-radius: 0.5rem;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                background-color 0.2s ease;
+}
+
+/* 左侧圆点指示(默认隐藏) */
+#my-lists-container [data-sidebar-list-id]::before {
+    content: '';
+    position: absolute;
+    left: 0.5rem; top: 50%;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--c-500);
+    transform: translateY(-50%) scale(0);
+    transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 0 6px color-mix(in srgb, var(--c-500) 60%, transparent);
+}
+
+/* hover:圆点弹出 + 微平移 + 背景着色 */
+#my-lists-container [data-sidebar-list-id]:hover::before {
+    transform: translateY(-50%) scale(1);
+}
+
+#my-lists-container [data-sidebar-list-id]:hover {
+    transform: translateX(2px);
+    background: color-mix(in srgb, var(--c-50) 60%, transparent);
+}
+
+/* 激活态:圆点常驻 + 渐变背景 */
+#my-lists-container [data-sidebar-list-id].active-sub-item::before {
+    transform: translateY(-50%) scale(1);
+    box-shadow: 0 0 8px color-mix(in srgb, var(--c-500) 80%, transparent);
+}
+
+#my-lists-container [data-sidebar-list-id].active-sub-item {
+    background: linear-gradient(90deg,
+        color-mix(in srgb, var(--c-50) 80%, transparent) 0%,
+        transparent 100%);
+}
+
+/* ===== 收藏子菜单图标 hover 微动画 (Favorites Icon Animation) ===== */
+/* 仅针对主列表图标(w-4),不影响刷新/跳转/删除等操作按钮 */
+#my-lists-container [data-sidebar-list-id] > i.w-4 {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+                color 0.2s ease;
+}
+
+#my-lists-container [data-sidebar-list-id]:hover > i.w-4 {
+    transform: scale(1.15);
+}
+
+#my-lists-container [data-sidebar-list-id].active-sub-item > i.w-4 {
+    transform: scale(1.08);
+}
+
+/* ===== 收藏子菜单深色模式适配 (Favorites Dark Mode) ===== */
+[data-appearance="dark"] #my-lists-container [data-sidebar-list-id]:hover {
+    background: color-mix(in srgb, var(--c-900) 40%, transparent);
+}
+
+[data-appearance="dark"] #my-lists-container [data-sidebar-list-id].active-sub-item {
+    background: linear-gradient(90deg,
+        color-mix(in srgb, var(--c-900) 50%, transparent) 0%,
+        transparent 100%);
+}
+
+/* 收缩模式下隐藏收藏子菜单指示与平移 */
+#main-sidebar.sidebar-collapsed #my-lists-container [data-sidebar-list-id]::before {
+    display: none;
+}
+
+#main-sidebar.sidebar-collapsed #my-lists-container [data-sidebar-list-id]:hover {
+    transform: none;
+}

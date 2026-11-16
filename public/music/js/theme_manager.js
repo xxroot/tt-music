@@ -1,0 +1,163 @@
+/**
+ * Theme Manager & Settings UI Logic
+ */
+
+// Available Themes
+const THEMES = ['emerald', 'blue', 'amber', 'violet', 'rose'];
+
+// Initialize Theme & Appearance
+function initTheme() {
+    const savedTheme = localStorage.getItem('lx_theme') || 'emerald';
+    const savedAppearance = localStorage.getItem('lx_appearance') || 'system';
+
+    setTheme(savedTheme, false);
+    setAppearance(savedAppearance, false);
+}
+
+// Set Theme (Colors)
+function setTheme(themeName, save = true) {
+    if (!THEMES.includes(themeName)) return;
+
+    // Apply to Body
+    document.documentElement.setAttribute('data-theme', themeName);
+
+    // Save Preference
+    if (save) {
+        localStorage.setItem('lx_theme', themeName);
+        console.log(`[Theme] Color scheme applied: ${themeName}`);
+    }
+
+    // 更新可视化颜色 (如果加载了可视化脚本)
+    if (window.musicVisualizer && typeof window.musicVisualizer.applySettings === 'function') {
+        window.musicVisualizer.applySettings();
+    }
+
+    // Update UI (Checkmarks and Highlights)
+    updateThemeSelectionUI(themeName);
+}
+
+// Set Appearance (Light/Dark/System)
+function setAppearance(mode, save = true) {
+    const validModes = ['light', 'dark', 'system'];
+    if (!validModes.includes(mode)) return;
+
+    // Apply to Root
+    if (mode === 'system') {
+        document.documentElement.removeAttribute('data-appearance');
+    } else {
+        document.documentElement.setAttribute('data-appearance', mode);
+    }
+
+    // Save Preference
+    if (save) {
+        localStorage.setItem('lx_appearance', mode);
+        console.log(`[Theme] Appearance mode applied: ${mode}`);
+    }
+
+    // Update UI in settings
+    updateAppearanceUI(mode);
+
+    // 刷新可视化颜色（rainbow / monochrome 依赖明暗模式）
+    if (window.musicVisualizer && typeof window.musicVisualizer.applySettings === 'function') {
+        window.musicVisualizer.applySettings();
+    }
+}
+
+function updateThemeSelectionUI(activeTheme) {
+    document.querySelectorAll('.theme-option').forEach(btn => {
+        const theme = btn.getAttribute('data-theme');
+        if (theme === activeTheme) {
+            btn.setAttribute('data-active', 'true');
+        } else {
+            btn.setAttribute('data-active', 'false');
+        }
+    });
+}
+
+function updateAppearanceUI(activeMode) {
+    document.querySelectorAll('.appearance-option').forEach(btn => {
+        const mode = btn.getAttribute('data-appearance');
+        if (mode === activeMode) {
+            btn.classList.add('ring-emerald-500', 'border-emerald-500', 'text-emerald-600');
+            btn.classList.remove('t-border-main', 't-text-muted');
+        } else {
+            btn.classList.remove('ring-emerald-500', 'border-emerald-500', 'text-emerald-600');
+            btn.classList.add('t-border-main', 't-text-muted');
+        }
+    });
+}
+
+function switchSettingsTab(tabName) {
+    const panels = ['system', 'display', 'logic', 'logs', 'cache', 'source', 'network', 'locallib', 'usermanage'];
+
+    // Deactivate all first
+    panels.forEach(p => {
+        const panel = document.getElementById(`settings-panel-${p}`);
+        const tab = document.getElementById(`settings-tab-${p}`);
+
+        if (panel) panel.classList.add('hidden');
+
+        if (tab) {
+            tab.classList.remove('text-emerald-600', 'border-emerald-600');
+            tab.classList.add('text-gray-500', 'border-transparent', 'hover:text-emerald-600');
+        }
+    });
+
+    // Activate the selected one
+    const activePanel = document.getElementById(`settings-panel-${tabName}`);
+    const activeTab = document.getElementById(`settings-tab-${tabName}`);
+
+    if (activePanel) {
+        activePanel.classList.remove('hidden');
+    }
+
+    if (activeTab) {
+        activeTab.classList.add('text-emerald-600', 'border-emerald-600');
+        activeTab.classList.remove('text-gray-500', 'border-transparent', 'hover:text-emerald-600');
+
+        // Scroll to the active tab to make sure it's visible (for mobile)
+        activeTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+
+    // Special logic for logs
+    if (tabName === 'logs' && window.renderSystemLogs) {
+        window.renderSystemLogs();
+    }
+
+    // 切到缓存 TAB 时自动刷新统计 (Auto-refresh stats when switching to cache tab)
+    if (tabName === 'cache' && window.updateServerCacheSize) {
+        window.updateServerCacheSize();
+    }
+
+    // 切到音源 TAB 时自动刷新源列表 (Auto-refresh source list when switching to source tab)
+    if (tabName === 'source' && window.renderCustomSources) {
+        window.renderCustomSources();
+    }
+
+    // 切到本地库 TAB 时自动刷新状态
+    if (tabName === 'locallib' && window.loadLibraryList) {
+        window.loadLibraryList();
+    }
+
+    // 切到用户管理 TAB 时初始化验证状态
+    if (tabName === 'usermanage' && window.initUserManage) {
+        window.initUserManage();
+    }
+}
+
+// Watch for system theme changes
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+    const currentAppearance = localStorage.getItem('lx_appearance') || 'system';
+    if (currentAppearance === 'system') {
+        console.log(`[Theme] System color scheme changed to ${e.matches ? 'dark' : 'light'}`);
+        // 刷新可视化颜色（rainbow / monochrome 依赖明暗模式）
+        if (window.musicVisualizer && typeof window.musicVisualizer.applySettings === 'function') {
+            window.musicVisualizer.applySettings();
+        }
+    }
+});
+
+// Initialize on Load
+document.addEventListener('DOMContentLoaded', () => {
+    initTheme();
+});

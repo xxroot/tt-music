@@ -1,0 +1,10 @@
+# 本地自行构建时使用（不影响默认的「从 Docker Hub 拉取」）：
+#   docker compose -f docker-compose.yml -f docker-compose.local.yml up -d --build
+#
+# 这个文件只做两件事：覆盖 image 名、加回 build 段。
+# 因此本地构建不需要修改主文件里的镜像地址，也不会把构建配置带进生产部署。
+services:
+  tt-music:
+    build:
+      context: .
+    image: tt-music:local

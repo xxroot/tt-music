@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>首次设置 · TT-Music</title>
+<style>
+  :root {
+    --brand: #10b981;
+    --brand-dark: #0d9488;
+    --ink: #1f2937;
+    --muted: #6b7280;
+    --line: #e5e7eb;
+    --danger: #dc2626;
+    --ok: #059669;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: linear-gradient(135deg, #10b981, #14b8a6, #3b82f6);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Roboto, Arial, sans-serif;
+    color: var(--ink);
+  }
+  .card {
+    width: 100%;
+    max-width: 460px;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 20px 60px rgba(15, 23, 42, .22);
+    padding: 34px 32px 28px;
+  }
+  .badge {
+    display: inline-block;
+    font-size: 12px;
+    letter-spacing: .08em;
+    color: var(--brand-dark);
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    border-radius: 999px;
+    padding: 4px 12px;
+    margin-bottom: 16px;
+  }
+  h1 { font-size: 24px; margin: 0 0 8px; font-weight: 700; }
+  .lead { font-size: 14px; line-height: 1.7; color: var(--muted); margin: 0 0 24px; }
+  .field { margin-bottom: 16px; }
+  label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 7px; }
+  .hint { font-weight: 400; color: var(--muted); font-size: 12px; margin-left: 4px; }
+  .wrap { position: relative; }
+  input[type=password], input[type=text] {
+    width: 100%;
+    height: 42px;
+    padding: 0 74px 0 13px;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
+    background: #fff;
+    color: var(--ink);
+  }
+  input:focus { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(16,185,129,.14); }
+  .toggle {
+    position: absolute; right: 8px; top: 7px;
+    height: 28px; padding: 0 10px;
+    border: 0; background: transparent;
+    color: var(--muted); font-size: 12px; cursor: pointer;
+  }
+  .toggle:hover { color: var(--brand-dark); }
+  .strength { display: flex; gap: 4px; margin-top: 8px; }
+  .strength i { flex: 1; height: 4px; border-radius: 3px; background: var(--line); transition: background .2s; }
+  .strength-text { font-size: 12px; color: var(--muted); margin-top: 6px; min-height: 16px; }
+  .opt {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin: 4px 0 18px;
+  }
+  .opt-row { display: flex; align-items: center; gap: 9px; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .opt-row input { width: 16px; height: 16px; accent-color: var(--brand); }
+  .opt-desc { font-size: 12px; color: var(--muted); line-height: 1.6; margin: 8px 0 0 25px; }
+  #player-field { display: none; margin-top: 14px; }
+  .btn {
+    width: 100%; height: 44px; border: 0; border-radius: 9px;
+    background: linear-gradient(to right, #10b981, #0d9488);
+    color: #fff; font-size: 15px; font-weight: 600; cursor: pointer;
+    transition: opacity .15s, transform .1s;
+  }
+  .btn:hover { opacity: .92; }
+  .btn:active { transform: translateY(1px); }
+  .btn:disabled { opacity: .6; cursor: not-allowed; }
+  .msg { font-size: 13px; line-height: 1.6; margin-top: 14px; min-height: 20px; }
+  .msg.error { color: var(--danger); }
+  .msg.ok { color: var(--ok); }
+  .foot {
+    margin-top: 22px; padding-top: 16px; border-top: 1px solid var(--line);
+    font-size: 12px; line-height: 1.7; color: var(--muted);
+  }
+  .foot b { color: #b45309; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="badge">首次部署 · 初始化</div>
+  <h1>欢迎使用 TT-Music</h1>
+  <p class="lead">检测到尚未设置管理员密码。请先创建一个密码，之后才能使用管理后台、Web 播放器和同步服务。</p>
+
+  <form id="setup-form" autocomplete="off" novalidate>
+    <div class="field">
+      <label for="admin">管理员密码 <span class="hint">8–128 位，至少两类字符</span></label>
+      <div class="wrap">
+        <input type="password" id="admin" placeholder="请输入管理员密码" autocomplete="new-password">
+        <button type="button" class="toggle" data-target="admin">显示</button>
+      </div>
+      <div class="strength"><i></i><i></i><i></i><i></i></div>
+      <div class="strength-text" id="strength-text"></div>
+    </div>
+
+    <div class="field">
+      <label for="confirm">确认管理员密码</label>
+      <div class="wrap">
+        <input type="password" id="confirm" placeholder="请再次输入" autocomplete="new-password">
+        <button type="button" class="toggle" data-target="confirm">显示</button>
+      </div>
+    </div>
+
+    <div class="opt">
+      <label class="opt-row" for="enable-player">
+        <input type="checkbox" id="enable-player">
+        <span>同时为 Web 播放器设置访问密码</span>
+      </label>
+      <p class="opt-desc">不勾选时播放器可直接访问。勾选后需输入密码才能打开；密码留空则与管理员密码相同。</p>
+      <div class="field" id="player-field" style="margin-bottom:0">
+        <label for="player">播放器密码 <span class="hint">可选</span></label>
+        <div class="wrap">
+          <input type="password" id="player" placeholder="留空则使用管理员密码" autocomplete="new-password">
+          <button type="button" class="toggle" data-target="player">显示</button>
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="btn" id="submit">完成设置</button>
+    <div class="msg" id="msg" role="alert"></div>
+  </form>
+
+  <div class="foot">
+    <b>安全提示：</b>请在可信的局域网环境内完成初始化，避免服务暴露公网时被他人抢先设置。<br>
+    密码会保存在数据卷 <code>data/config.js</code> 中，请妥善保管该目录。同步账号可在管理后台「用户管理」中添加。
+  </div>
+</div>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var form = $('setup-form'), msg = $('msg'), submit = $('submit');
+  var admin = $('admin'), confirm = $('confirm'), player = $('player');
+  var enablePlayer = $('enable-player'), playerField = $('player-field');
+
+  function setMsg(text, kind) {
+    msg.textContent = text || '';
+    msg.className = 'msg' + (text ? ' ' + kind : '');
+  }
+
+  // 显示 / 隐藏密码
+  Array.prototype.forEach.call(document.querySelectorAll('.toggle'), function (btn) {
+    btn.addEventListener('click', function () {
+      var input = $(btn.dataset.target);
+      var show = input.type === 'password';
+      input.type = show ? 'text' : 'password';
+      btn.textContent = show ? '隐藏' : '显示';
+      input.focus();
+    });
+  });
+
+  enablePlayer.addEventListener('change', function () {
+    playerField.style.display = enablePlayer.checked ? 'block' : 'none';
+  });
+
+  // 与服务端口径一致的强度提示（仅用于引导，实际校验在服务端）
+  function strength(pwd) {
+    if (!pwd) return 0;
+    var score = 0;
+    if (pwd.length >= 8) score++;
+    if (pwd.length >= 12) score++;
+    var classes = [/[a-z]/, /[A-Z]/, /\d/, /[^a-zA-Z0-9\u4e00-\u9fa5]/, /[\u4e00-\u9fa5]/]
+      .filter(function (r) { return r.test(pwd); }).length;
+    if (classes >= 2) score++;
+    if (classes >= 3 && pwd.length >= 12) score++;
+    return Math.min(4, score);
+  }
+  admin.addEventListener('input', function () {
+    var s = strength(admin.value);
+    var bars = document.querySelectorAll('.strength i');
+    var colors = ['#ef4444', '#f59e0b', '#10b981', '#059669'];
+    var labels = ['太弱', '较弱', '良好', '很强'];
+    Array.prototype.forEach.call(bars, function (bar, i) {
+      bar.style.background = i < s ? colors[s - 1] : '#e5e7eb';
+    });
+    $('strength-text').textContent = admin.value ? '强度：' + labels[s - 1] : '';
+  });
+
+  // 已初始化则直接跳后台（例如刷新了残留的页面）
+  fetch('/api/setup/status', { cache: 'no-store' })
+    .then(function (r) { return r.json(); })
+    .then(function (d) { if (!d.required) location.replace('/admin'); })
+    .catch(function () {});
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    setMsg('');
+    if (!admin.value || !confirm.value) { setMsg('请填写并确认管理员密码', 'error'); return; }
+    if (admin.value !== confirm.value) { setMsg('两次输入的管理员密码不一致', 'error'); return; }
+
+    submit.disabled = true;
+    submit.textContent = '正在保存…';
+    try {
+      var res = await fetch('/api/setup/init', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          adminPassword: admin.value,
+          confirmPassword: confirm.value,
+          enablePlayerAuth: enablePlayer.checked,
+          playerPassword: enablePlayer.checked ? player.value : ''
+        })
+      });
+      var data = await res.json();
+      if (!data.success) { setMsg(data.message || '设置失败，请重试', 'error'); return; }
+      setMsg('设置成功，正在进入管理后台…', 'ok');
+      admin.value = confirm.value = player.value = '';
+      setTimeout(function () { location.replace(data.redirect || '/admin'); }, 900);
+    } catch (err) {
+      setMsg('无法连接服务，请稍后重试', 'error');
+    } finally {
+      submit.disabled = false;
+      submit.textContent = '完成设置';
+    }
+  });
+
+  admin.focus();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+# 构建上下文排除项（相对上下文根，不进入镜像层）
+/node_modules
+/data
+/music
+/config.js
+/.env
+/.env.*
+**/.DS_Store
+*.log
+*.tmp
+/.git
+/.gitignore
+/.github
+/README.md
+/docker-compose.yml
+/docker-compose.local.yml
